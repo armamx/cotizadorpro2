@@ -417,21 +417,503 @@
      * En el siguiente paso mostraremos sus precios.
      */
 
-    window.seleccionarEquipo = function (id) {
+window.seleccionarEquipo = function (id) {
 
-        console.log(
-            'Equipo seleccionado:',
-            id
-        );
+    const editor =
+        document.getElementById('editorEquipo');
+
+    if (!editor) return;
+
+
+    const precios =
+        window.CATALOGO_CONFIG &&
+        window.CATALOGO_CONFIG.precios
+            ? window.CATALOGO_CONFIG.precios[id]
+            : null;
+
+
+    const equipo =
+        window.CATALOGO_CONFIG &&
+        Array.isArray(window.CATALOGO_CONFIG.equipos)
+            ? window.CATALOGO_CONFIG.equipos.find(
+                function (item) {
+                    return item.id === id;
+                }
+            )
+            : null;
+
+
+    if (!precios) {
+
+        editor.style.display = 'block';
+
+        editor.innerHTML =
+            '<div class="status danger">' +
+            'No encontramos precios para el equipo ' +
+            escapeHtml(id) +
+            '</div>';
+
+        return;
+    }
+
+
+    const nombre =
+        equipo
+            ? (
+                equipo.name ||
+                equipo.nombre ||
+                id
+            )
+            : id;
+
+
+    const marca =
+        equipo
+            ? (
+                equipo.brand ||
+                equipo.marca ||
+                ''
+            )
+            : '';
+
+
+    const storage =
+        equipo
+            ? (
+                equipo.storage ||
+                ''
+            )
+            : '';
+
+
+    const vigencia =
+        window.CATALOGO_CONFIG.vigencias &&
+        window.CATALOGO_CONFIG.vigencias[id]
+            ? window.CATALOGO_CONFIG.vigencias[id]
+            : '';
+
+
+    const planes =
+        window.CATALOGO_CONFIG.planes || [];
+
+
+    let html = '';
+
+
+    html += `
+        <div
+            style="
+                border:2px solid #111;
+                border-radius:12px;
+                padding:20px;
+                background:#fafafa;
+            "
+        >
+
+            <div
+                style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:flex-start;
+                    gap:15px;
+                    margin-bottom:20px;
+                "
+            >
+
+                <div>
+
+                    <h2 style="margin:0;">
+                        ${escapeHtml(nombre)}
+                    </h2>
+
+                    <div
+                        style="
+                            margin-top:6px;
+                            color:#666;
+                        "
+                    >
+                        ${escapeHtml(marca)}
+                        ${marca ? ' · ' : ''}
+                        ${escapeHtml(storage)}
+                    </div>
+
+                    <div
+                        style="
+                            margin-top:5px;
+                            color:#777;
+                            font-size:13px;
+                        "
+                    >
+                        ID: ${escapeHtml(id)}
+                    </div>
+
+                </div>
+
+                <button
+                    type="button"
+                    onclick="cerrarEditorEquipo()"
+                >
+                    Cerrar
+                </button>
+
+            </div>
+
+
+            <div
+                style="
+                    background:white;
+                    border:1px solid #ddd;
+                    border-radius:10px;
+                    padding:15px;
+                    margin-bottom:15px;
+                "
+            >
+
+                <h3 style="margin-top:0;">
+                    💰 Precio de contado
+                </h3>
+
+                <input
+                    id="precioContado"
+                    type="number"
+                    step="0.01"
+                    value="${precios.contado ?? ''}"
+                >
+
+            </div>
+
+
+            <h3>
+                📋 Precios por plan
+            </h3>
+    `;
+
+
+    planes.forEach(function (plan) {
+
+        const nombrePlan =
+            plan.name;
+
+
+        const datosPlan =
+            precios.planes &&
+            precios.planes[nombrePlan]
+                ? precios.planes[nombrePlan]
+                : {
+                    24: null,
+                    30: null,
+                    36: null
+                };
+
+
+        html += `
+            <div
+                style="
+                    background:white;
+                    border:1px solid #ddd;
+                    border-radius:10px;
+                    padding:15px;
+                    margin-bottom:12px;
+                "
+            >
+
+                <h3
+                    style="
+                        margin-top:0;
+                        margin-bottom:12px;
+                    "
+                >
+                    ${escapeHtml(nombrePlan)}
+                </h3>
+
+                <div class="grid">
+
+                    <div>
+
+                        <label>
+                            24 meses
+                        </label>
+
+                        <input
+                            id="precio_${id}_${nombrePlan}_24"
+                            type="number"
+                            step="0.01"
+                            value="${datosPlan[24] ?? ''}"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label>
+                            30 meses
+                        </label>
+
+                        <input
+                            id="precio_${id}_${nombrePlan}_30"
+                            type="number"
+                            step="0.01"
+                            value="${datosPlan[30] ?? ''}"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label>
+                            36 meses
+                        </label>
+
+                        <input
+                            id="precio_${id}_${nombrePlan}_36"
+                            type="number"
+                            step="0.01"
+                            value="${datosPlan[36] ?? ''}"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+
+    });
+
+
+    html += `
+
+            <div
+                style="
+                    background:white;
+                    border:1px solid #ddd;
+                    border-radius:10px;
+                    padding:15px;
+                "
+            >
+
+                <h3 style="margin-top:0;">
+                    📅 Vigencia
+                </h3>
+
+                <input
+                    id="vigenciaEquipo"
+                    type="text"
+                    value="${escapeHtml(vigencia)}"
+                    placeholder="Ejemplo: 2026-08-31"
+                >
+
+            </div>
+
+
+            <div
+                style="
+                    margin-top:20px;
+                    display:flex;
+                    gap:10px;
+                    flex-wrap:wrap;
+                "
+            >
+
+                <button
+                    type="button"
+                    class="primary"
+                    onclick="guardarPreciosEquipo('${escapeHtml(id)}')"
+                >
+                    💾 Guardar cambios
+                </button>
+
+                <button
+                    type="button"
+                    onclick="cerrarEditorEquipo()"
+                >
+                    Cancelar
+                </button>
+
+            </div>
+
+
+            <div
+                id="mensajeEditor"
+                style="margin-top:15px;"
+            >
+            </div>
+
+        </div>
+    `;
+
+
+    editor.innerHTML = html;
+
+    editor.style.display = 'block';
+
+
+    editor.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+    });
+
+};
+
+    window.cerrarEditorEquipo = function () {
+
+    const editor =
+        document.getElementById('editorEquipo');
+
+    if (!editor) return;
+
+    editor.style.display = 'none';
+    editor.innerHTML = '';
+
+};
+
+
+window.guardarPreciosEquipo = function (id) {
+
+    const datos =
+        window.CATALOGO_CONFIG.precios[id];
+
+    if (!datos) {
 
         alert(
-            'Equipo seleccionado: ' +
-            id +
-            '\n\nEl siguiente paso será mostrar sus precios.'
+            'No encontramos los datos del equipo.'
         );
 
-    };
+        return;
+    }
 
+
+    /*
+     * PRECIO DE CONTADO
+     */
+
+    const contado =
+        document.getElementById(
+            'precioContado'
+        );
+
+    if (contado) {
+
+        const valor =
+            contado.value.trim();
+
+        datos.contado =
+            valor === ''
+                ? null
+                : Number(valor);
+
+    }
+
+
+    /*
+     * PRECIOS DE LOS PLANES
+     */
+
+    const planes =
+        window.CATALOGO_CONFIG.planes || [];
+
+
+    planes.forEach(function (plan) {
+
+        const nombrePlan =
+            plan.name;
+
+
+        if (!datos.planes) {
+
+            datos.planes = {};
+
+        }
+
+
+        if (!datos.planes[nombrePlan]) {
+
+            datos.planes[nombrePlan] = {
+                24: null,
+                30: null,
+                36: null
+            };
+
+        }
+
+
+        [24, 30, 36].forEach(function (plazo) {
+
+            const input =
+                document.getElementById(
+                    `precio_${id}_${nombrePlan}_${plazo}`
+                );
+
+
+            if (!input) return;
+
+
+            const valor =
+                input.value.trim();
+
+
+            datos.planes[nombrePlan][plazo] =
+                valor === ''
+                    ? null
+                    : Number(valor);
+
+        });
+
+    });
+
+
+    /*
+     * VIGENCIA
+     */
+
+    const vigencia =
+        document.getElementById(
+            'vigenciaEquipo'
+        );
+
+
+    if (vigencia) {
+
+        window.CATALOGO_CONFIG.vigencias[id] =
+            vigencia.value.trim();
+
+    }
+
+
+    /*
+     * MENSAJE
+     */
+
+    const mensaje =
+        document.getElementById(
+            'mensajeEditor'
+        );
+
+
+    if (mensaje) {
+
+        mensaje.className =
+            'status success';
+
+        mensaje.innerHTML =
+            '✓ Cambios realizados correctamente.' +
+            '<br><small>' +
+            'El cambio está actualmente en memoria. ' +
+            'Todavía no hemos modificado catalog.js.' +
+            '</small>';
+
+    }
+
+
+    console.log(
+        'Precios actualizados:',
+        id,
+        datos
+    );
+
+};
 
     /*
      * ACTIVAR BUSCADOR
