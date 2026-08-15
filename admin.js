@@ -268,7 +268,7 @@
      * Arrancar.
      */
 
-    if (document.readyState === 'loading') {
+     if (document.readyState === 'loading') {
 
         document.addEventListener(
             'DOMContentLoaded',
@@ -280,5 +280,188 @@
         inicializar();
 
     }
+
+
+    /*
+     * BUSCADOR DE EQUIPOS
+     */
+
+    function mostrarEquipos(filtro = '') {
+
+        const contenedor =
+            document.getElementById('listaEquipos');
+
+        if (!contenedor) return;
+
+
+        if (
+            !window.CATALOGO_CONFIG ||
+            !Array.isArray(window.CATALOGO_CONFIG.equipos)
+        ) {
+
+            contenedor.innerHTML =
+                '<div class="status danger">' +
+                'No hay equipos disponibles.' +
+                '</div>';
+
+            return;
+        }
+
+
+        const texto =
+            filtro.trim().toLowerCase();
+
+
+        const equipos =
+            window.CATALOGO_CONFIG.equipos.filter(function (equipo) {
+
+                const nombre =
+                    String(
+                        equipo.name ||
+                        equipo.nombre ||
+                        ''
+                    ).toLowerCase();
+
+                const marca =
+                    String(
+                        equipo.brand ||
+                        equipo.marca ||
+                        ''
+                    ).toLowerCase();
+
+                const id =
+                    String(
+                        equipo.id ||
+                        ''
+                    ).toLowerCase();
+
+
+                return (
+                    !texto ||
+                    nombre.includes(texto) ||
+                    marca.includes(texto) ||
+                    id.includes(texto)
+                );
+
+            });
+
+
+        if (!equipos.length) {
+
+            contenedor.innerHTML =
+                '<div class="status">' +
+                'No encontramos equipos con "' +
+                escapeHtml(filtro) +
+                '".' +
+                '</div>';
+
+            return;
+        }
+
+
+        contenedor.innerHTML = equipos.map(function (equipo) {
+
+            const id =
+                equipo.id || '';
+
+            const nombre =
+                equipo.name ||
+                equipo.nombre ||
+                id;
+
+            const marca =
+                equipo.brand ||
+                equipo.marca ||
+                '';
+
+
+            return `
+                <div
+                    class="card"
+                    style="margin:10px 0; border:1px solid #ddd;"
+                >
+
+                    <strong>
+                        ${escapeHtml(nombre)}
+                    </strong>
+
+                    <div style="margin-top:6px;color:#666;">
+                        ${escapeHtml(marca)}
+                        ${marca ? ' · ' : ''}
+                        ID: ${escapeHtml(id)}
+                    </div>
+
+                    <div style="margin-top:12px;">
+
+                        <button
+                            class="primary"
+                            onclick="seleccionarEquipo('${escapeHtml(id)}')"
+                        >
+                            Ver precios
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+
+        }).join('');
+
+    }
+
+
+    /*
+     * SELECCIONAR EQUIPO
+     *
+     * Por ahora solamente comprobamos que funciona.
+     * En el siguiente paso mostraremos sus precios.
+     */
+
+    window.seleccionarEquipo = function (id) {
+
+        console.log(
+            'Equipo seleccionado:',
+            id
+        );
+
+        alert(
+            'Equipo seleccionado: ' +
+            id +
+            '\n\nEl siguiente paso será mostrar sus precios.'
+        );
+
+    };
+
+
+    /*
+     * ACTIVAR BUSCADOR
+     */
+
+    function activarBuscador() {
+
+        const buscador =
+            document.getElementById('buscarEquipo');
+
+        if (!buscador) return;
+
+
+        buscador.addEventListener(
+            'input',
+            function () {
+
+                mostrarEquipos(
+                    buscador.value
+                );
+
+            }
+        );
+
+
+        mostrarEquipos();
+
+    }
+
+
+    activarBuscador();
 
 })();
