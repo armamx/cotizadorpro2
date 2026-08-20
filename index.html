@@ -5211,7 +5211,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;co
 <!-- [v1.11.62] incentivos.js — fuente única de los bonos de equipo, compartida
      con los 5 tableros de comisiones. Sin ?v=BUILD_ID a propósito: pesa ~3KB y
      va stale-while-revalidate, así los tableros lo consumen sin BUILD_ID propio. -->
-<script src="incentivos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-catalog.js"></script>
+     
+     <script src="incentivos.js"></script>
 <script>
 document.write('<scr'+'ipt src="catalog.js?v='+(window.BUILD_ID||'0')+'"></scr'+'ipt>');
 </script>
