@@ -53,3 +53,23 @@ async function obtenerEquipoSupabase(codigo) {
 
     return data;
 }
+
+// PRUEBA DE CONEXIÓN SUPABASE
+(async function () {
+    try {
+        const equipos = await obtenerEquiposSupabase();
+
+        console.log(
+            "✅ Supabase conectado. Equipos activos:",
+            equipos.length
+        );
+
+        window.EQUIPOS_SUPABASE = equipos;
+
+    } catch (error) {
+        console.error(
+            "❌ Error conectando con Supabase:",
+            error
+        );
+    }
+})();
