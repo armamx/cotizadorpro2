@@ -444,6 +444,230 @@ async function cargarCatalogoSupabase() {
     return catalogo;
 }
 
+// ============================================================
+// ADAPTADOR DE COMPATIBILIDAD
+// Hace que app.js pueda seguir usando CAT / IMG / VIGENCY,
+// pero ahora alimentados desde Supabase.
+// ============================================================
+
+function activarCatalogoSupabaseEnApp(catalogo) {
+
+    const equipos = catalogo.equipos || [];
+    const precios = catalogo.precios || [];
+
+    // --------------------------------------------------------
+    // CAT
+    // --------------------------------------------------------
+
+    const ios = [];
+    const android = [];
+
+    equipos.forEach(equipo => {
+
+        const extra = equipo.datos_extra || {};
+
+        const item = {
+            id: equipo.codigo,
+            name: equipo.nombre,
+            brand: equipo.marca,
+            storage: equipo.capacidad,
+
+            status:
+                extra.status ||
+                (equipo.activo ? "RESURTIBLE" : "NO RESURTIBLE"),
+
+            bundle:
+                extra.bundle || null,
+
+            specs:
+                equipo.especificaciones || {},
+
+            sell:
+                equipo.argumentos_venta || [],
+
+            obj:
+                equipo.objeciones || []
+        };
+
+        if (
+            String(equipo.marca || "").toUpperCase() === "APPLE"
+        ) {
+            ios.push(item);
+        } else {
+            android.push(item);
+        }
+    });
+
+
+    // --------------------------------------------------------
+    // IMG
+    // --------------------------------------------------------
+
+    const imagenes = {};
+
+    equipos.forEach(equipo => {
+
+        if (equipo.codigo && equipo.imagen_url) {
+
+            imagenes[equipo.codigo] =
+                equipo.imagen_url;
+
+        }
+
+    });
+
+
+    // --------------------------------------------------------
+    // VIGENCY
+    // --------------------------------------------------------
+
+    const vigencias = {};
+
+    const preciosPorEquipo = {};
+
+    precios.forEach(precio => {
+
+        if (!preciosPorEquipo[precio.equipo_id]) {
+            preciosPorEquipo[precio.equipo_id] = [];
+        }
+
+        preciosPorEquipo[precio.equipo_id].push(precio);
+
+    });
+
+
+    equipos.forEach(equipo => {
+
+        const lista =
+            preciosPorEquipo[equipo.id] || [];
+
+        // Buscar una vigencia válida asociada
+        // al equipo.
+
+        const conVigencia =
+            lista.find(p =>
+                p.vigencia &&
+                p.vigencia.fecha_fin
+            );
+
+        if (conVigencia) {
+
+            vigencias[equipo.codigo] =
+                conVigencia.vigencia.fecha_fin;
+
+        } else {
+
+            vigencias[equipo.codigo] =
+                "indefinido";
+
+        }
+
+    });
+
+
+    // --------------------------------------------------------
+    // REEMPLAZAR LAS FUENTES GLOBALES ANTIGUAS
+    // --------------------------------------------------------
+
+    window.CAT = {
+        ios: ios,
+        android: android
+    };
+
+    window.IMG = imagenes;
+
+    window.VIGENCY = vigencias;
+
+
+    // --------------------------------------------------------
+    // MARCA DE CONTROL
+    // --------------------------------------------------------
+
+    window.CATALOGO_FUENTE_ACTUAL =
+        "SUPABASE";
+
+    console.log(
+        "🔄 App ahora usa catálogo SUPABASE"
+    );
+
+    console.log(
+        "📱 CAT.ios:",
+        ios.length
+    );
+
+    console.log(
+        "🤖 CAT.android:",
+        android.length
+    );
+
+    console.log(
+        "🖼️ IMG:",
+        Object.keys(imagenes).length
+    );
+
+    console.log(
+        "📅 VIGENCY:",
+        Object.keys(vigencias).length
+    );
+
+
+    // --------------------------------------------------------
+    // REFRESCAR LAS VISTAS QUE YA EXISTEN
+    // --------------------------------------------------------
+
+    try {
+
+        if (
+            typeof renderDevs === "function"
+        ) {
+            renderDevs();
+        }
+
+    } catch (e) {
+
+        console.warn(
+            "[Supabase] renderDevs:",
+            e
+        );
+
+    }
+
+
+    try {
+
+        if (
+            typeof initMomento === "function"
+        ) {
+            initMomento();
+        }
+
+    } catch (e) {
+
+        console.warn(
+            "[Supabase] initMomento:",
+            e
+        );
+
+    }
+
+
+    try {
+
+        if (
+            typeof renderFlashCard === "function"
+        ) {
+            renderFlashCard();
+        }
+
+    } catch (e) {
+
+        console.warn(
+            "[Supabase] renderFlashCard:",
+            e
+        );
+
+    }
+}
 
 // ============================================================
 // PROMESA GLOBAL DE CARGA
@@ -451,25 +675,29 @@ async function cargarCatalogoSupabase() {
 
 window.SUPABASE_CATALOGO_READY =
     cargarCatalogoSupabase()
-        .then(catalogo => {
+       .then(catalogo => {
 
-            console.log(
-                "🚀 Supabase Catalog READY"
-            );
+    // 🔥 NUEVO: pasar Supabase al formato que entiende app.js
+    activarCatalogoSupabaseEnApp(catalogo);
 
-            console.log(
-                "📱 EQUIPOS DISPONIBLES:",
-                catalogo.equipos.length
-            );
+    console.log(
+        "🚀 Supabase Catalog READY"
+    );
 
-            console.log(
-                "🔎 PRIMER EQUIPO:",
-                catalogo.equipos[0]
-            );
+    console.log(
+        "📱 EQUIPOS DISPONIBLES:",
+        catalogo.equipos.length
+    );
 
-            return catalogo;
+    console.log(
+        "🔎 PRIMER EQUIPO:",
+        catalogo.equipos[0]
+    );
 
-        })
+    return catalogo;
+
+})
+
         .catch(error => {
 
             console.error(
