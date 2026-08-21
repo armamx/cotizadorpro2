@@ -457,6 +457,16 @@ window.SUPABASE_CATALOGO_READY =
                 "🚀 Supabase Catalog READY"
             );
 
+            console.log(
+                "📱 EQUIPOS DISPONIBLES:",
+                catalogo.equipos.length
+            );
+
+            console.log(
+                "🔎 PRIMER EQUIPO:",
+                catalogo.equipos[0]
+            );
+
             return catalogo;
 
         })
