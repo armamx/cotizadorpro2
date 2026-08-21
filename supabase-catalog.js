@@ -578,6 +578,49 @@ function activarCatalogoSupabaseEnApp(catalogo) {
 
     window.VIGENCY = vigencias;
 
+        // --------------------------------------------------------
+    // PRICES
+    // Convertir precios de Supabase al formato que entiende app.js
+    // --------------------------------------------------------
+
+    const prices = {};
+    const firstPlan = {};
+
+    precios.forEach(precio => {
+
+        const codigo = precio.codigo;
+
+        if (!codigo) return;
+
+        if (!prices[codigo]) {
+            prices[codigo] = {
+                contado: precio.precio_contado,
+                planes: {}
+            };
+        }
+
+        const planNombre =
+            precio.plan_nombre ||
+            precio.plan?.nombre;
+
+        if (!planNombre) return;
+
+        if (!prices[codigo].planes[planNombre]) {
+            prices[codigo].planes[planNombre] = {};
+        }
+
+        prices[codigo].planes[planNombre][
+            String(precio.meses)
+        ] = precio.precio;
+
+        if (!firstPlan[codigo]) {
+            firstPlan[codigo] = planNombre;
+        }
+    });
+
+    window.PRICES = prices;
+    window.FIRST_PLAN = firstPlan;
+
 
     // --------------------------------------------------------
     // MARCA DE CONTROL
