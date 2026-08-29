@@ -5216,7 +5216,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;co
      
      <script src="incentivos.js"></script>
 <script>
-document.write('<scr'+'ipt src="catalog.js?v='+(window.BUILD_ID||'0')+'"></scr'+'ipt>');
+window.SUPABASE_CATALOGO_READY
+  .then(function() {
+
+    console.log("🟢 Supabase listo. Cargando app.js...");
+
+    var s = document.createElement("script");
+
+    s.src = "app.js?v=" + (window.BUILD_ID || "0");
+
+    s.onload = function() {
+      console.log("✅ app.js cargado después de Supabase");
+    };
+
+    s.onerror = function() {
+      console.error("❌ No se pudo cargar app.js");
+    };
+
+    document.head.appendChild(s);
+
+  })
+  .catch(function(error) {
+
+    console.error(
+      "❌ Supabase no pudo cargar el catálogo. app.js no se iniciará.",
+      error
+    );
+
+  });
 </script>
 <script>
 // [v1.10.38] Carga DIFERIDA de las imágenes del catálogo (catalog-img.js).
