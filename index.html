@@ -5305,9 +5305,6 @@ window._onCatalogImgReady=function(){
      versionado (cache-first en el SW, como catalog.js). Se inyecta con
      document.write para conservar el orden síncrono de carga: catalog.js ya
      está arriba, y el bloque de arranque de abajo sigue corriendo al final. -->
-<script>
-document.write('<scr'+'ipt src="app.js?v='+(window.BUILD_ID||'0')+'"></scr'+'ipt>');
-</script>
 
 <!-- COTIZACION MODAL -->
 <div class="cot-overlay" id="cot-overlay">
