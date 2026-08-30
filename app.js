@@ -2725,15 +2725,21 @@ function _model3dGet(id){
   if(typeof e==='string') e=MODEL3D[e];
   if(e) return e;
   // Si el id es variante de una base que sí tiene modelo, la reusa.
-  if(typeof STORAGE_VARIANTS!=='undefined'){
-    for(const bid in STORAGE_VARIANTS){
-      if(STORAGE_VARIANTS[bid].some(function(v){return v[1]===id;})){
-        let b=MODEL3D[bid];
-        if(typeof b==='string') b=MODEL3D[b];
-        if(b) return b;
+ if(typeof window.STORAGE_VARIANTS !== 'undefined'){
+  for(const bid in (window.STORAGE_VARIANTS || {})){
+    if((window.STORAGE_VARIANTS[bid] || []).some(function(v){
+      return v[1] === id;
+    })){
+      let b = (window.MODEL3D || {})[bid];
+
+      if(typeof b === 'string'){
+        b = (window.MODEL3D || {})[b];
       }
+
+      if(b) return b;
     }
   }
+}
   return null;
 }
 
