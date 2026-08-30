@@ -1081,7 +1081,7 @@ function initPlans(deviceId){
   // solo dejaba esto a 2 equipos. Ahora `null/undefined` = no aplica el plan,
   // `0` = aplica y sale a $0.
   let firstPlan=null;
-  PLANS_DATA.forEach(function(plan){
+  (window.PLANS_DATA || []).forEach(function(plan){
     const planPrices = priceInfo.planes[plan.name];
     // [v1.9.29] Hay plan si CUALQUIER plazo tiene precio resuelto (incluye $0 incluido)
     const hasAny = (
