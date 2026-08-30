@@ -788,6 +788,11 @@ function toggleFichaCmp(){
   btn.classList.toggle('on',cmpSet.has(curFichaId));
 }
 
+// Compatibilidad con catálogo Supabase
+if (typeof window.YT === 'undefined') {
+  window.YT = {};
+}
+
 function showFicha(id){
   // Reset accessories cart on new device
   if(typeof resetAccCart==='function') resetAccCart();
