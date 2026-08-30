@@ -416,6 +416,17 @@ async function openAdopcion(){
 
 
 // ── EQUIPOS DEL MOMENTO V2 ──────────────────────────────────────────────────
+// ── COMPATIBILIDAD EQUIPOS DEL MOMENTO ────────────────────────────────
+// El catálogo nuevo viene de Supabase. Si no existen las variables
+// antiguas, evitamos que app.js se detenga.
+
+if (typeof MOMENTO_PLANS === 'undefined') {
+  window.MOMENTO_PLANS = [];
+}
+
+if (typeof MOMENTO_BY_PLAN === 'undefined') {
+  window.MOMENTO_BY_PLAN = {};
+}
 
 function initMomento(){
   const el=document.getElementById('momento-cards');
