@@ -1178,14 +1178,27 @@ function renderPriceResult(){
   }
   // Build optional notice for upcoming/future prices
   let _notice='';
-  // Resolve base id (without _512 etc) for future prices lookup
-  let _bid=curFichaId;
-  for(const bid in STORAGE_VARIANTS){
-    if(STORAGE_VARIANTS[bid].some(function(v){return v[1]===curFichaId})){_bid=bid;break;}
+ // Resolve base id (without _512 etc) for future prices lookup
+let _bid=curFichaId;
+
+for(const bid in (window.STORAGE_VARIANTS || {})){
+  if((window.STORAGE_VARIANTS[bid] || []).some(function(v){
+    return v[1]===curFichaId;
+  })){
+    _bid=bid;
+    break;
   }
-  const _fp=(window.FUTURE_PRICES || {})[_bid] ||
+}
+
+const _fp=(window.FUTURE_PRICES || {})[_bid] ||
           (window.FUTURE_PRICES || {})[curFichaId];
-  const _isUpcoming=UPCOMING_ONLY.indexOf(_bid)>=0||UPCOMING_ONLY.indexOf(curFichaId)>=0;
+
+const _isUpcoming=
+  Array.isArray(window.UPCOMING_ONLY) &&
+  (
+    window.UPCOMING_ONLY.indexOf(_bid)>=0 ||
+    window.UPCOMING_ONLY.indexOf(curFichaId)>=0
+  );
   if(_isUpcoming&&_fp){
     // [v1.9.6] Solo mostrar banner si la fecha de inicio es REALMENTE futura
     let _showUpcoming = true;
