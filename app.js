@@ -2502,7 +2502,8 @@ function closeBrandInfo(){
 
 
 function getPlanCommission(planName){
-  return PLAN_COMMISSION[planName] || 0;
+  const commission = window.PLAN_COMMISSION || {};
+  return commission[planName] || 0;
 }
 
 // [v1.11.63] Resuelve id de equipo → NOMBRE de modelo, que es la llave de
