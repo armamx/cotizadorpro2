@@ -382,6 +382,41 @@ async function cargarCatalogoSupabase() {
     window.PLANES_SUPABASE =
         planesActivos;
 
+    // --------------------------------------------------------
+// COMPATIBILIDAD CON app.js
+// app.js utiliza PLANS_DATA para mostrar los planes.
+// Ahora la fuente oficial es Supabase.
+// --------------------------------------------------------
+
+window.PLANS_DATA = planesActivos.map(function(plan) {
+
+    const extra = plan.datos_extra || {};
+
+    return {
+        name: plan.nombre,
+        renta: plan.renta_mensual ??
+               plan.renta ??
+               extra.renta_mensual ??
+               extra.renta ??
+               0,
+
+        color: plan.color ??
+               extra.color ??
+               '#667085',
+
+        text: plan.text ??
+              extra.text ??
+              '#fff'
+    };
+
+});
+
+console.log(
+    "📋 PLANS_DATA:",
+    window.PLANS_DATA
+);
+    
+
 
     window.PLAZOS_SUPABASE =
         plazosActivos;
