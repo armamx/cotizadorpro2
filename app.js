@@ -1457,12 +1457,29 @@ function calcBudget(){
 // ── COTIZACION MODAL LOGIC ──────────────────────────────────────────────────
 
 function getSeguroPrice(contado){
-  for(let i=0;i<SEGURO_TIERS.length;i++){
-    const t = SEGURO_TIERS[i];
-    if(contado >= t.min && contado <= t.max) return t.price;
+  const tiers = window.SEGURO_TIERS || [];
+
+  // Si el catálogo anterior ya está cargado, conservar exactamente
+  // el cálculo original.
+  if(tiers.length){
+    for(let i=0;i<tiers.length;i++){
+      const t = tiers[i];
+
+      if(contado >= t.min && contado <= t.max){
+        return t.price;
+      }
+    }
+
+    if(contado < tiers[0].min){
+      return tiers[0].price;
+    }
+
+    return tiers[tiers.length-1].price;
   }
-  if(contado < SEGURO_TIERS[0].min) return SEGURO_TIERS[0].price;
-  return SEGURO_TIERS[SEGURO_TIERS.length-1].price;
+
+  // Supabase todavía no tiene configuración de seguros.
+  // No bloquear la generación de la cotización.
+  return 0;
 }
 // [v1.10.80] Comisión de seguro por tabla oficial (no es 80% del costo mensual).
 function getSeguroCommission(contado){
