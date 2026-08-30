@@ -793,6 +793,10 @@ if (typeof window.YT === 'undefined') {
   window.YT = {};
 }
 
+if (typeof window.STORAGE_VARIANTS === 'undefined') {
+  window.STORAGE_VARIANTS = {};
+}
+
 function showFicha(id){
   // Reset accessories cart on new device
   if(typeof resetAccCart==='function') resetAccCart();
