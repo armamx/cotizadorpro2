@@ -721,6 +721,11 @@ function imgI(id,cls){
   return `<svg width="100%" height="100%" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="background:${c.bg}">${c.icon}</svg>`;
 }
 
+// Compatibilidad con el catálogo nuevo de Supabase
+if (typeof window.UPCOMING_ONLY === 'undefined') {
+  window.UPCOMING_ONLY = [];
+}
+
 function renderDevs(){
   const q=document.getElementById('search-in').value.toLowerCase();
   let devs=CAT[curOS];
