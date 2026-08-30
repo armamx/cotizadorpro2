@@ -1521,13 +1521,27 @@ function openCotModal(){
   const rentaPlan = PLANS_RENTAS[curPlan]||0;
   const desc = (1 - promo/info.contado)*100;
   
-  // Detect upcoming
-  let _bid=curFichaId;
-  for(const bid in STORAGE_VARIANTS){
-    if(STORAGE_VARIANTS[bid].some(function(v){return v[1]===curFichaId})){_bid=bid;break;}
+// Detect upcoming
+let _bid=curFichaId;
+
+for(const bid in (window.STORAGE_VARIANTS || {})){
+  if((window.STORAGE_VARIANTS[bid] || []).some(function(v){
+    return v[1]===curFichaId;
+  })){
+    _bid=bid;
+    break;
   }
-  const fp = FUTURE_PRICES[_bid]||FUTURE_PRICES[curFichaId];
-  const isUpcoming = UPCOMING_ONLY.indexOf(_bid)>=0||UPCOMING_ONLY.indexOf(curFichaId)>=0;
+}
+
+const fp=(window.FUTURE_PRICES || {})[_bid] ||
+         (window.FUTURE_PRICES || {})[curFichaId];
+
+const isUpcoming=
+  Array.isArray(window.UPCOMING_ONLY) &&
+  (
+    window.UPCOMING_ONLY.indexOf(_bid)>=0 ||
+    window.UPCOMING_ONLY.indexOf(curFichaId)>=0
+  );
   
   cotState = {
     port:false, control:false, seguro:false,
