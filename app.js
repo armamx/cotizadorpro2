@@ -9600,8 +9600,8 @@ function aiBuildEquipoDetail(id, plazoFiltro){
   if(d.sell && d.sell.length) eq.sell_points = d.sell.slice(0,3);
   if(d.obj && d.obj.length) eq.objeciones_comunes = d.obj.slice(0,2);
 
-  if(typeof PLANS_DATA !== 'undefined'){
-    PLANS_DATA.forEach(function(p){
+ if(Array.isArray(window.PLANS_DATA)){
+  window.PLANS_DATA.forEach(function(p){
       const por_plazo = {};
       const plazos = plazoFiltro ? [plazoFiltro] : ['24','30','36'];
       plazos.forEach(function(plazo){
@@ -11162,25 +11162,38 @@ function cotPlazosDe(plan){
 function cotBuildCmpPills(){
   const wrap=document.getElementById('cot-cmp-pills');
   if(!wrap) return;
-  if(!cotState || !cotState.device){ wrap.innerHTML=''; return; }
+
+  if(!cotState || !cotState.device){
+    wrap.innerHTML='';
+    return;
+  }
+
   if(!cotState.comparar) cotState.comparar=[];
+
   let html='', disponibles=0;
-  if(typeof PLANS_DATA !== 'undefined'){
-    PLANS_DATA.forEach(function(p){
-      /* [v1.11.79] El plan actual TAMBIÉN se ofrece: sirve para comparar el mismo
-         plan a otro plazo (Black 24m contra Black 36m). Se descarta solo si no le
-         queda ningún plazo libre. */
+
+  if(Array.isArray(window.PLANS_DATA)){
+    window.PLANS_DATA.forEach(function(p){
+
       if(!cotPlazosDe(p.name).length) return;
+
       disponibles++;
-      const sel=cotState.comparar.filter(function(c){return c.plan===p.name;})[0];
-      const label=sel ? p.name+' · '+sel.plazo+'m' : p.name;
+
+      const sel=cotState.comparar.filter(function(c){
+        return c.plan===p.name;
+      })[0];
+
+      const label=sel
+        ? p.name+' · '+sel.plazo+'m'
+        : p.name;
+
       html+='<button class="cot-pill'+(sel?' on':'')+'" onclick="cotToggleCmp(\''+p.name.replace(/'/g,"\\'")+'\')">'+label+'</button>';
     });
   }
-  wrap.innerHTML=html;
-  wrap.style.display = disponibles ? '' : 'none';
-}
 
+  wrap.innerHTML=html;
+  wrap.style.display=disponibles ? '' : 'none';
+}
 /* [v1.11.79] Un solo control, sin filas nuevas: cada toque avanza al siguiente
    plazo con precio y en el último lo quita. La etiqueta muestra el plazo que
    trae, así el asesor siempre ve qué va a salir en la imagen. */
