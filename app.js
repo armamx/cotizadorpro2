@@ -1483,12 +1483,25 @@ function getSeguroPrice(contado){
 }
 // [v1.10.80] Comisión de seguro por tabla oficial (no es 80% del costo mensual).
 function getSeguroCommission(contado){
-  for(let i=0;i<SEGURO_TIERS.length;i++){
-    const t = SEGURO_TIERS[i];
-    if(contado >= t.min && contado <= t.max) return t.comm;
+  const tiers = window.SEGURO_TIERS || [];
+
+  if(!tiers.length){
+    return 0;
   }
-  if(contado < SEGURO_TIERS[0].min) return SEGURO_TIERS[0].comm;
-  return SEGURO_TIERS[SEGURO_TIERS.length-1].comm;
+
+  for(let i=0;i<tiers.length;i++){
+    const t = tiers[i];
+
+    if(contado >= t.min && contado <= t.max){
+      return t.comm || 0;
+    }
+  }
+
+  if(contado < tiers[0].min){
+    return tiers[0].comm || 0;
+  }
+
+  return tiers[tiers.length-1].comm || 0;
 }
 
 let cotState = {
@@ -1636,17 +1649,17 @@ function cotClose(){
   document.getElementById('cot-overlay').classList.remove('show');
 }
 
-
 function cotTogglePort(){
   cotState.port = !cotState.port;
-  document.getElementById('cot-port-switch').classList.toggle('on', cotState.port);
+
+  const sw = document.getElementById('cot-port-switch');
+  if(sw){
+    sw.classList.toggle('on', cotState.port);
+  }
+
   cotRender();
 }
-function cotToggleControl(){
-  cotState.control = !cotState.control;
-  document.getElementById('cot-control-switch').classList.toggle('on', cotState.control);
-  cotRender();
-}
+function cotToggleControl(){ cotState.control = !cotState.control; const sw = document.getElementById('cot-control-switch'); if(sw){ sw.classList.toggle('on', cotState.control); } cotRender(); }
 function cotToggleSeguro(){
   cotState.seguro = !cotState.seguro;
   document.getElementById('cot-seguro-switch').classList.toggle('on', cotState.seguro);
@@ -1792,10 +1805,21 @@ function cotRender(){
   
   // Mensualidad: plan + remanente equipo / plazo + servicios
   let planEffective = cotState.planRenta;
-  /* [v1.8] Titanio: descuento port 10% */ if(cotState.port) planEffective = Math.round(cotState.planRenta * (1 - (cotState.plan==="Titanio"?0.10:PORT_DISCOUNT)));
+  /* [v1.8] Titanio: descuento port 10% */ if(cotState.port){
+  const portDiscount =
+    cotState.plan === "Titanio"
+      ? 0.10
+      : (typeof window.PORT_DISCOUNT !== 'undefined'
+          ? window.PORT_DISCOUNT
+          : 0);
+
+  planEffective = Math.round(
+    cotState.planRenta * (1 - portDiscount)
+  );
+}
   
-  const seguroPrice = cotState.seguro ? getSeguroPrice(cotState.contado) : 0;
-  const controlPrice = cotState.control ? CONTROL_PRICE : 0;
+const seguroPrice = cotState.seguro ? getSeguroPrice(cotState.contado) : 0;
+const controlPrice = cotState.control ? 50 : 0;
   
   // Equipment remainder financed over plazo
   const remanente = Math.max(0, cotState.promo - engPay);
@@ -1841,11 +1865,21 @@ function cotRender(){
   // Mensualidad detail
   h += '<div style="height:8px"></div>';
   h += '<div class="cot-resumen-row"><span class="cot-resumen-label">Plan '+cotState.plan+'</span><span class="cot-resumen-val">$'+fmx(cotState.planRenta)+'</span></div>';
-  
-  if(cotState.port){
-    const ahorro = cotState.planRenta - planEffective;
-    h += '<div class="cot-resumen-row discount"><span class="cot-resumen-label">Descuento portabilidad (-'+(cotState.plan==='Titanio'?'10':'20')+'%)</span><span class="cot-resumen-val">-$'+fmx(ahorro)+'</span></div>';
-  }
+if(cotState.port){
+  const ahorro = cotState.planRenta - planEffective;
+
+  const portPct =
+    cotState.plan === 'Titanio'
+      ? 10
+      : (typeof window.PORT_DISCOUNT !== 'undefined'
+          ? Math.round(window.PORT_DISCOUNT * 100)
+          : 20);
+
+  h += '<div class="cot-resumen-row discount">'
+    + '<span class="cot-resumen-label">Descuento portabilidad (-'+portPct+'%)</span>'
+    + '<span class="cot-resumen-val">-$'+fmx(ahorro)+'</span>'
+    + '</div>';
+}
   
   // Equipo financiamiento
   if(equipoMensual > 0){
@@ -2036,14 +2070,46 @@ function cotSend(){
   const depositoGarantia = cotState.deposito || 0;
   const totalInicial = engPay + rentasGarantia + depositoGarantia;
   
-  let planEffective = cotState.planRenta;
-  /* [v1.8] Titanio: descuento port 10% */ if(cotState.port) planEffective = Math.round(cotState.planRenta * (1 - (cotState.plan==="Titanio"?0.10:PORT_DISCOUNT)));
-  const seguroPrice = cotState.seguro ? getSeguroPrice(cotState.contado) : 0;
-  const controlPrice = cotState.control ? CONTROL_PRICE : 0;
-  const remanente = Math.max(0, cotState.promo - engPay);
-  const equipoMensual = Math.round(remanente / cotState.plazo);
-  const totalMensual = planEffective + equipoMensual + seguroPrice + controlPrice;
-  const totalMensualSinPort = cotState.planRenta + equipoMensual + seguroPrice + controlPrice;
+ let planEffective = cotState.planRenta;
+
+// Portabilidad: 20% para todos los planes excepto Titanio, que usa 10%
+if(cotState.port){
+  const portDiscount = cotState.plan === 'Titanio' ? 0.10 : 0.20;
+
+  planEffective = Math.round(
+    cotState.planRenta * (1 - portDiscount)
+  );
+}
+
+// Servicios adicionales
+const seguroPrice = cotState.seguro
+  ? getSeguroPrice(cotState.contado)
+  : 0;
+
+const controlPrice = cotState.control
+  ? 50
+  : 0;
+
+// Mensualidad del equipo
+const remanente = Math.max(0, cotState.promo - engPay);
+
+const equipoMensual = Math.round(
+  remanente / cotState.plazo
+);
+
+// Total mensual con portabilidad
+const totalMensual =
+  planEffective +
+  equipoMensual +
+  seguroPrice +
+  controlPrice;
+
+// Total mensual sin portabilidad
+const totalMensualSinPort =
+  cotState.planRenta +
+  equipoMensual +
+  seguroPrice +
+  controlPrice;
   
   let msg = '';
   // [v1.10.37] Saludo personalizado según tipo de operación (POSPAGO/RENOVACION).
