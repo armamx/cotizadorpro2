@@ -1183,7 +1183,8 @@ function renderPriceResult(){
   for(const bid in STORAGE_VARIANTS){
     if(STORAGE_VARIANTS[bid].some(function(v){return v[1]===curFichaId})){_bid=bid;break;}
   }
-  const _fp=FUTURE_PRICES[_bid]||FUTURE_PRICES[curFichaId];
+  const _fp=(window.FUTURE_PRICES || {})[_bid] ||
+          (window.FUTURE_PRICES || {})[curFichaId];
   const _isUpcoming=UPCOMING_ONLY.indexOf(_bid)>=0||UPCOMING_ONLY.indexOf(curFichaId)>=0;
   if(_isUpcoming&&_fp){
     // [v1.9.6] Solo mostrar banner si la fecha de inicio es REALMENTE futura
