@@ -836,10 +836,10 @@ function showFicha(id){
   h+='</div>';
   // Storage selector if device has variants
   // Find variants only for the CURRENT device id (not stale global var)
-  let _variants=STORAGE_VARIANTS[id]||null;
+let _variants=(window.STORAGE_VARIANTS || {})[id] || null;
   if(!_variants){
     // Check if id is a variant of some base
-    for(const bid in STORAGE_VARIANTS){
+   for(const bid in (window.STORAGE_VARIANTS || {})){
       if(STORAGE_VARIANTS[bid].some(function(v){return v[1]===id})){
         _variants=STORAGE_VARIANTS[bid];
         break;
