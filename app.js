@@ -2150,9 +2150,9 @@ const totalMensualSinPort =
     msg += '💰 Precio del equipo: $' + fmx(cotState.promo.toFixed(2)) + '\n';
     msg += '🏷️ Descuento: ' + cotState.descPct + '%\n';
   }
-  if(cotState.port){
-    msg += '🔄 Cliente con portabilidad: ' + (cotState.plan==='Titanio'?'10':'20') + '% desc. plan x 6 meses\n';
-  }
+ if(cotState.port){
+  msg += '🔄 Cliente con portabilidad: ' + (cotState.plan==='Titanio'?'10':'20') + '% de descuento en facturas 2 a 7\n';
+}
   msg += '\n';
   
   msg += '💵 *Pago inicial*\n';
