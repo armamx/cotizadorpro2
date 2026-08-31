@@ -1806,12 +1806,12 @@ function cotRender(){
   // Mensualidad: plan + remanente equipo / plazo + servicios
   let planEffective = cotState.planRenta;
   /* [v1.8] Titanio: descuento port 10% */ if(cotState.port){
-  const portDiscount =
-    cotState.plan === "Titanio"
-      ? 0.10
-      : (typeof window.PORT_DISCOUNT !== 'undefined'
-          ? window.PORT_DISCOUNT
-          : 0);
+const portDiscount =
+  cotState.plan === "Titanio"
+    ? 0.10
+    : (typeof window.PORT_DISCOUNT !== 'undefined'
+        ? window.PORT_DISCOUNT
+        : 0.20);
 
   planEffective = Math.round(
     cotState.planRenta * (1 - portDiscount)
@@ -1917,8 +1917,8 @@ if(cotState.port){
   }
   
   if(cotState.port){
-    h += '<div style="font-size:10px;color:var(--label3);text-align:right;margin-top:4px;font-style:italic">Descuento por 6 meses, después: $'+fmx(cotState.planRenta + equipoMensual + seguroPrice + controlPrice)+'/mes</div>';
-  }
+  h += '<div style="font-size:10px;color:var(--label3);text-align:right;margin-top:4px;font-style:italic">📌 Descuento por portabilidad: aplica en las facturas 2 a 7 (6 meses). La factura 1 y las posteriores se cobran con la mensualidad normal.</div>';
+}
   
   document.getElementById('cot-resumen').innerHTML = h;
   if(typeof renderCommission === 'function') renderCommission();
