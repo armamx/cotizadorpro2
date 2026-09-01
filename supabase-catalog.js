@@ -495,7 +495,39 @@ function activarCatalogoSupabaseEnApp(catalogo) {
 
     const equipos = catalogo.equipos || [];
     const precios = catalogo.precios || [];
+    const servicios = catalogo.servicios || [];
 
+    // --------------------------------------------------------
+    // SERVICIOS
+    // --------------------------------------------------------
+
+    const seguroAtt = servicios.find(function(servicio) {
+        return String(servicio.codigo || "").toLowerCase() === "seguro_att"
+            && servicio.activo !== false;
+    });
+
+    if (
+        seguroAtt &&
+        seguroAtt.configuracion &&
+        Array.isArray(seguroAtt.configuracion.tiers)
+    ) {
+        window.SEGURO_TIERS = seguroAtt.configuracion.tiers;
+
+        console.log(
+            "🛡️ SEGURO_TIERS desde Supabase:",
+            window.SEGURO_TIERS
+        );
+    } else {
+        window.SEGURO_TIERS = [];
+
+        console.warn(
+            "⚠️ No se encontró configuración válida para seguro_att"
+        );
+    }
+
+    // --------------------------------------------------------
+    // CAT
+    // --------------------------------------------------------
     // --------------------------------------------------------
     // CAT
     // --------------------------------------------------------
