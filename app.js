@@ -3867,41 +3867,55 @@ function updateGreeting(){
     primerNombre = primerNombre.charAt(0).toUpperCase() + primerNombre.slice(1).toLowerCase();
   }
 
-  const ahora = new Date();
-  const hora = ahora.getHours();
-  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-  const nombreDia = dias[ahora.getDay()];
+// Fecha completa
+const ahora = new Date();
 
-  // === Subtítulo corto: el día + momento ===
-  let franja;
-  if(hora >= 5 && hora < 12)       franja = 'buen día';
-  else if(hora >= 12 && hora < 19) franja = 'buena tarde';
-  else if(hora >= 19 && hora < 23) franja = 'buena noche';
-  else                             franja = 'turno nocturno';
-  msgEl.textContent = nombreDia + ', ' + franja;
+const dias = [
+  'Domingo',
+  'Lunes',
+  'Martes',
+  'Miércoles',
+  'Jueves',
+  'Viernes',
+  'Sábado'
+];
 
-  // === Saludo grande: nombre + frase del momento (cambia por hora) ===
-  // El title se pinta en 2 líneas: nombre arriba, frase abajo.
-  let frasesFranja;
-  if(hora >= 5 && hora < 12){
-    frasesFranja = ['tu día empieza.','a darle hoy.','listo para vender.'];
-  } else if(hora >= 12 && hora < 19){
-    frasesFranja = ['sigue el ritmo.','vas a media tarde.','a cerrar más.'];
-  } else if(hora >= 19 && hora < 23){
-    frasesFranja = ['cierra fuerte.','los últimos del día.','remata la jornada.'];
-  } else {
-    frasesFranja = ['qué garra.','aquí se nota quién quiere.','imparable.'];
-  }
-  // Rota la frase por día para que no sea siempre la misma a la misma hora
-  const frase = frasesFranja[ahora.getDate() % frasesFranja.length];
+const meses = [
+  'enero',
+  'febrero',
+  'marzo',
+  'abril',
+  'mayo',
+  'junio',
+  'julio',
+  'agosto',
+  'septiembre',
+  'octubre',
+  'noviembre',
+  'diciembre'
+];
 
-  if(primerNombre){
-    titleEl.innerHTML = primerNombre + ',<br>' + frase;
-  } else {
-    titleEl.textContent = frase.charAt(0).toUpperCase() + frase.slice(1);
-  }
-  if(iconEl) iconEl.style.display = 'none';
+const nombreDia = dias[ahora.getDay()];
+const diaNumero = ahora.getDate();
+const nombreMes = meses[ahora.getMonth()];
+const anio = ahora.getFullYear();
 
+msgEl.style.display = '';
+msgEl.textContent =
+  nombreDia + ', ' +
+  diaNumero + ' de ' +
+  nombreMes + ' de ' +
+  anio;
+
+// Saludo
+if(primerNombre){
+  titleEl.textContent = 'Hola, ' + primerNombre;
+} else {
+  titleEl.textContent = 'Hola';
+}
+
+if(iconEl) iconEl.style.display = 'none';
+  
   // [v1.10.47] Versión real en el cierre del Home
   var verEl = document.getElementById('hv2-footer-ver');
   if(verEl && typeof APP_VERSION !== 'undefined') verEl.textContent = APP_VERSION;
@@ -3985,7 +3999,7 @@ async function actualizarPulsoHome(){
     }catch(e){ cotHoy = 0; }
     _hv2CountUp(numEl, cotHoy);
     // Meta del día: base 10 para asesor. La barra muestra el avance.
-    var META_ASESOR = 10;
+    var META_ASESOR = 3;
     if(metaBar){ metaBar.style.display = ''; }
     if(metaFill){
       var pct = Math.min(100, Math.round((cotHoy / META_ASESOR) * 100));
