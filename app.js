@@ -10030,7 +10030,7 @@ document.addEventListener('DOMContentLoaded', function(){
 // El panel ya no se limita a 3 ATTUIDs: lo ve el administrador principal y
 // cualquier MANDO (regional / director / dirección nacional), cada quien con su
 // alcance. El servidor (Cloud Function adminAccess) revalida todo.
-const SUPER_ADMIN_ATTUID = 'DC499W';
+const SUPER_ADMIN_ATTUID = 'ADMIN1';
 const ADM_ROLES_OPERATIVOS = ['asesor', 'ejecutivo', 'gerente'];
 const ADM_ROLES_MANDO = ['regional', 'director', 'director_nacional'];
 
@@ -10601,7 +10601,7 @@ function admSheetCrear(tienda, region){
     '<div class="adm-sheet-h">Crear usuario</div>'
     +'<div class="adm-sheet-sub">Se da de alta en <b>'+_admEsc(t)+'</b>'+(r?' &middot; '+_admEsc(r):'')+' y queda activo de inmediato.</div>'
     +'<div class="adm-label" style="margin:16px 2px 8px">ATTUID <span style="font-weight:400;text-transform:none;color:var(--hv2-ink3)">- en MAYUSCULAS</span></div>'
-    +'<input id="adm-new-attuid" class="adm-pass-in" type="text" placeholder="Ej. DC499W" autocapitalize="characters" autocomplete="off" oninput="this.value=this.value.toUpperCase()">'
+    +'<input id="adm-new-attuid" class="adm-pass-in" type="text" placeholder="Ej. ADMIN1" autocapitalize="characters" autocomplete="off" oninput="this.value=this.value.toUpperCase()">'
     +'<div class="adm-label" style="margin:16px 2px 8px">Nombre del asesor <span style="font-weight:400;text-transform:none;color:var(--hv2-ink3)">- en MAYUSCULAS</span></div>'
     +'<input id="adm-new-nombre" class="adm-pass-in" type="text" placeholder="Ej. JUAN PEREZ LOPEZ" autocapitalize="characters" autocomplete="off" oninput="this.value=this.value.toUpperCase()">'
     +'<div class="adm-label" style="margin:18px 2px 8px">Es asesor o gerente?</div>'
