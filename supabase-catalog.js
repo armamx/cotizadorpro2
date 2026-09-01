@@ -525,9 +525,36 @@ function activarCatalogoSupabaseEnApp(catalogo) {
         );
     }
 
-    // --------------------------------------------------------
-    // CAT
-    // --------------------------------------------------------
+  // --------------------------------------------------------
+// CONTROL DE DATOS
+// --------------------------------------------------------
+
+const controlDatos = servicios.find(function(servicio) {
+    return String(servicio.codigo || "").toLowerCase() === "control_datos"
+        && servicio.activo !== false;
+});
+
+if (controlDatos) {
+    const config = controlDatos.configuracion || {};
+
+    window.CONTROL_PRICE =
+        Number(
+            controlDatos.precio ??
+            config.precio_fijo ??
+            0
+        ) || 0;
+
+    console.log(
+        "📶 CONTROL_PRICE desde Supabase:",
+        window.CONTROL_PRICE
+    );
+} else {
+    window.CONTROL_PRICE = 0;
+
+    console.warn(
+        "⚠️ No se encontró control_datos activo en Supabase"
+    );
+}
     // --------------------------------------------------------
     // CAT
     // --------------------------------------------------------
