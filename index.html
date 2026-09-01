@@ -403,11 +403,15 @@ const APP_VERSION = 'v1';</script>
 #s-ficha .sell-item{border-bottom-color:var(--hv2-line)}
 #s-ficha .sell-txt{color:var(--hv2-ink)}
 #s-ficha .sell-ico{background:var(--hv2-accent-soft)}
-/* Tarjetas de precio y enganche (pestaña Planes) */
-#s-ficha .price-result-card,
-#s-ficha .enganche-card{
-  background:var(--hv2-card);border:.5px solid var(--hv2-line);
+/* Tarjeta de precio (pestaña Planes) */
+#s-ficha .price-result-card{
+  background:var(--hv2-card);
+  border:.5px solid var(--hv2-line);
   box-shadow:none;
+}
+/* Ocultar COMPLETO el bloque de enganche / historial */
+#s-ficha .enganche-card{
+  display:none !important;
 }
 /* Pestaña Similares */
 #s-ficha .similar-card{
@@ -5815,7 +5819,7 @@ window._onCatalogImgReady=function(){
         <div class="cot-resumen" id="cot-resumen">—</div>
       </div>
       
-      <div class="comm-section" id="comm-section" onclick="toggleCommSection(event)">
+      <div class="comm-section" id="comm-section" onclick="toggleCommSection(event)" style="display:none !important;">
         <div class="comm-section-toggle">
           <div class="comm-section-info">
             <div class="comm-section-title">Tu comisión potencial</div>
