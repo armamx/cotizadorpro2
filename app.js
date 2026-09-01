@@ -2643,7 +2643,7 @@ function calculateTotalCommission(state){
   }
   let controlComm = 0;
   if(state.control){
-    controlComm = Math.round(CONTROL_PRICE_FIXED * ADDON_COMMISSION_RATE);
+    controlComm = Math.round((window.CONTROL_PRICE || 0) * ADDON_COMMISSION_RATE);
   }
   
   return {
