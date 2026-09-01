@@ -3998,21 +3998,18 @@ async function actualizarPulsoHome(){
       }
     }catch(e){ cotHoy = 0; }
     _hv2CountUp(numEl, cotHoy);
-    // Meta del día: base 10 para asesor. La barra muestra el avance.
-    var META_ASESOR = 3;
-    if(metaBar){ metaBar.style.display = ''; }
-    if(metaFill){
-      var pct = Math.min(100, Math.round((cotHoy / META_ASESOR) * 100));
-      setTimeout(function(){ metaFill.style.width = pct + '%'; }, 650);
-    }
-    // El número grande muestra el avance "X/10"; tras el conteo animado
-    // le agregamos el "/10" para que se lea como meta.
-    if(numEl){
-      setTimeout(function(){
-        numEl.innerHTML = cotHoy + '<span style="font-size:15px;font-weight:600;opacity:.5">/' + META_ASESOR + '</span>';
-      }, 950);
-    }
-    if(lblEl){ lblEl.textContent = 'cotizaste hoy'; }
+   // Contador de cotizaciones del día — sin meta
+if(metaBar){
+  metaBar.style.display = 'none';
+}
+
+if(numEl){
+  numEl.textContent = cotHoy;
+}
+
+if(lblEl){
+  lblEl.textContent = 'cotizaste hoy';
+}
     // Racha de actividad
     if(rachaEl){
       var racha = (typeof calcularRacha==='function') ? calcularRacha() : 0;
