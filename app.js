@@ -873,11 +873,11 @@ let _variants=(window.STORAGE_VARIANTS || {})[id] || null;
   // Especificaciones, YouTube. ANTES arrancaba en Especificaciones.
   h+='<div class="tab-bar">';
   h+='<div class="tb on" onclick="swTab(\'plans\',this)">Planes</div>';
-  h+='<div class="tb" onclick="swTab(\'acc\',this)">Accesorios</div>';
+  h+='<div class="tb" onclick="swTab(\'acc\',this)" style="display:none !important;">Accesorios</div>';
   h+='<div class="tb" onclick="swTab(\'sim\',this)">Similares</div>';
   h+='<div class="tb" onclick="swTab(\'sell\',this)">Argumentos</div>';
   h+='<div class="tb" onclick="swTab(\'specs\',this)">Especificaciones</div>';
-  h+='<div class="tb" onclick="swTab(\'tt\',this)">▶ YouTube</div>';
+  h+='<div class="tb" onclick="swTab(\'tt\',this)" style="display:none !important;">▶ YouTube</div>';
   h+='</div>';
 
   // Specs tab
