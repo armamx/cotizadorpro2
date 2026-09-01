@@ -65,7 +65,6 @@ async function cargarTodosSupabase(tabla, select = "*") {
 }
 
 
-// ============================================================
 // CARGAR CATÁLOGO COMPLETO
 // ============================================================
 
@@ -78,7 +77,8 @@ async function cargarCatalogoSupabase() {
         planes,
         planPlazos,
         vigencias,
-        precios
+        precios,
+        servicios
     ] = await Promise.all([
 
         cargarTodosSupabase(
@@ -104,10 +104,14 @@ async function cargarCatalogoSupabase() {
         cargarTodosSupabase(
             "precios",
             "*"
+        ),
+
+        cargarTodosSupabase(
+            "servicios",
+            "*"
         )
 
     ]);
-
 
     // ========================================================
     // FILTRAR REGISTROS ACTIVOS
@@ -316,56 +320,58 @@ async function cargarCatalogoSupabase() {
     });
 
 
-    // ========================================================
-    // OBJETO FINAL DEL CATÁLOGO
-    // ========================================================
+  // ========================================================
+// OBJETO FINAL DEL CATÁLOGO
+// ========================================================
 
-    const catalogo = {
+const catalogo = {
 
-        version: "supabase",
+    version: "supabase",
 
-        fecha_carga:
-            new Date().toISOString(),
+    fecha_carga:
+        new Date().toISOString(),
 
-        equipos:
-            equiposCompletos,
+    equipos:
+        equiposCompletos,
 
-        planes:
-            planesActivos,
+    planes:
+        planesActivos,
 
-        plazos:
-            plazosActivos,
+    plazos:
+        plazosActivos,
 
-        vigencias:
-            vigenciasActivas,
+    vigencias:
+        vigenciasActivas,
 
-        precios:
-            preciosEnriquecidos,
+    precios:
+        preciosEnriquecidos,
 
-        indices: {
+    servicios:
+        servicios,
 
-            equiposPorId:
-                equiposPorId,
+    indices: {
 
-            equiposPorCodigo:
-                equiposPorCodigo,
+        equiposPorId:
+            equiposPorId,
 
-            planesPorId:
-                planesPorId,
+        equiposPorCodigo:
+            equiposPorCodigo,
 
-            plazosPorId:
-                plazosPorId,
+        planesPorId:
+            planesPorId,
 
-            vigenciasPorId:
-                vigenciasPorId,
+        plazosPorId:
+            plazosPorId,
 
-            preciosPorEquipo:
-                preciosPorEquipo
+        vigenciasPorId:
+            vigenciasPorId,
 
-        }
+        preciosPorEquipo:
+            preciosPorEquipo
 
-    };
+    }
 
+};
 
     // ========================================================
     // DISPONIBLE GLOBALMENTE
