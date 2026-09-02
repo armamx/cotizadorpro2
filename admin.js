@@ -770,7 +770,7 @@ window.seleccionarEquipo = function (id) {
 };
 
 
-window.guardarPreciosEquipo = function (id) {
+window.guardarPreciosEquipo = async function (id) {
 
     const datos =
         window.CATALOGO_CONFIG.precios[id];
