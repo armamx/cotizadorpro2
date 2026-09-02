@@ -176,9 +176,43 @@
 
 </main>
 
-<script src="catalog.js"></script>
-<script src="catalog-data.js"></script>
-<script src="admin.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-catalog.js"></script>
 
+<script>
+window.SUPABASE_CATALOGO_READY
+    .then(function () {
+
+        console.log('🟢 Supabase listo en Admin');
+
+        var scriptAdmin = document.createElement('script');
+        scriptAdmin.src = 'admin.js?v=' + Date.now();
+
+        scriptAdmin.onload = function () {
+            console.log('✅ admin.js cargado correctamente');
+        };
+
+        scriptAdmin.onerror = function () {
+            console.error('❌ Error cargando admin.js');
+        };
+
+        document.body.appendChild(scriptAdmin);
+
+    })
+    .catch(function (error) {
+
+        console.error('❌ Error cargando catálogo Supabase:', error);
+
+        var estado = document.getElementById('estado');
+
+        if (estado) {
+            estado.className = 'status danger';
+            estado.textContent =
+                'ERROR cargando catálogo desde Supabase: ' +
+                (error.message || error);
+        }
+
+    });
+</script>
 </body>
 </html>
