@@ -13,6 +13,9 @@ const supabaseClient = window.supabase.createClient(
     SUPABASE_PUBLISHABLE_KEY
 );
 
+// Disponible para el administrador
+window.supabaseClient = supabaseClient;
+
 
 // ============================================================
 // CONFIGURACIÓN
