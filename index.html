@@ -6251,65 +6251,6 @@ window.SUPABASE_CATALOGO_READY
   });
 </script>
 <script>
-// [v1.10.38] Carga DIFERIDA de las imágenes del catálogo (catalog-img.js).
-// Las 65 imágenes (~699KB) ya NO bloquean el arranque: catalog.js trae IMG={}
-// vacío, la app abre de inmediato mostrando el ícono de respaldo en los
-// equipos, y este script carga las imágenes en segundo plano. Al terminar,
-// _onCatalogImgReady refresca las vistas visibles para que aparezcan.
-(function(){
-  function cargarImagenes(){
-    var s=document.createElement('script');
-    s.src='catalog-img.js?v='+(window.BUILD_ID||'0');
-    s.async=true;
-    s.onerror=function(){ console.warn('[catalog-img] no se pudo cargar; los equipos usarán ícono de respaldo'); };
-    document.head.appendChild(s);
-  }
-  // [v1.11.103] Antes se esperaba al evento 'load' + 300ms. El problema: 'load'
-  // llega DESPUÉS de que el service worker terminó de precachear, así que las
-  // fotos se pedían justo cuando la red estaba saturada y el asesor las veía
-  // llegar segundos tarde. Ahora arrancan en cuanto el DOM está listo — la
-  // vista ya se pintó y el ícono de respaldo está en pantalla, así que no hay
-  // nada que bloquear.
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded', function(){ setTimeout(cargarImagenes, 50); });
-  } else {
-    setTimeout(cargarImagenes, 50);
-  }
-})();
-// Callback que catalog-img.js invoca al terminar de cargar: refresca las
-// vistas visibles para que las imágenes recién llegadas aparezcan sin que el
-// asesor tenga que recargar ni navegar.
-window._onCatalogImgReady=function(){
-  try{
-    // Re-renderizar el grid del catálogo si está visible
-    var cat=document.getElementById('s-catalog');
-    if(cat && cat.classList.contains('active') && typeof renderDevs==='function'){
-      renderDevs();
-    }
-    // Re-renderizar el home si está visible (tarjetas de "momentos")
-    var home=document.getElementById('s-home');
-    if(home && home.classList.contains('active') && typeof initMomento==='function'){
-      initMomento();
-    }
-    // [v1.10.49] Re-renderizar las ofertas flash del home — sus miniaturas
-    // se pintan con IMG y, si las imágenes llegaron después, hay que
-    // repintarlas (sin esto, en escritorio quedaban con el ícono de respaldo).
-    if(typeof renderFlashCard==='function'){
-      renderFlashCard();
-    }
-    // Refrescar cualquier <img> ya en el DOM marcada con data-img-id
-    var pendientes=document.querySelectorAll('img[data-img-id]');
-    pendientes.forEach(function(el){
-      var id=el.getAttribute('data-img-id');
-      if(window.IMG && window.IMG[id]){ el.src=window.IMG[id]; }
-    });
-  }catch(e){ console.warn('[catalog-img] refresh:', e && e.message); }
-};
-</script>
-<!-- [v1.11.61] app.js — el bloque principal salió del index a su propio archivo
-     versionado (cache-first en el SW, como catalog.js). Se inyecta con
-     document.write para conservar el orden síncrono de carga: catalog.js ya
-     está arriba, y el bloque de arranque de abajo sigue corriendo al final. -->
 
 <!-- COTIZACION MODAL -->
 <div class="cot-overlay" id="cot-overlay">
