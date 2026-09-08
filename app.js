@@ -671,7 +671,7 @@ function elegirPlataforma(os){
 
 function showCatalog(os){
   curOS=os;curBrand='Todos';
-  document.getElementById('cat-title').textContent=os==='ios'?'iPhone & iOS':'Android';
+  document.getElementById('cat-title').textContent=os==='ios'?'iPhone iOS':'Android';
   document.getElementById('search-in').value='';
   buildFilters(os);renderDevs();show('s-catalog');
 }
